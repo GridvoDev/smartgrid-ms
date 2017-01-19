@@ -50,14 +50,14 @@ describe('smartgridMs route use case test', ()=> {
             done(err);
         });
     });
-    describe('#post:/smartgridMs\n' +
+    describe('#post:/lessees\n' +
         'input:{lesseeID:"",lesseeName:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
         context('request for register a lessee', ()=> {
             it('should response message with errcode:Fail if post body is illegal', done=> {
                 var body = {};
                 request(server)
-                    .post(`/smartgridMs`)
+                    .post(`/lessees`)
                     .send(body)
                     .set('Accept', 'application/json')
                     .expect(200)
@@ -78,7 +78,7 @@ describe('smartgridMs route use case test', ()=> {
                     lesseeName: "lesseeName"
                 };
                 request(server)
-                    .post(`/smartgridMs`)
+                    .post(`/lessees`)
                     .send(body)
                     .set('Accept', 'application/json')
                     .expect(200)
