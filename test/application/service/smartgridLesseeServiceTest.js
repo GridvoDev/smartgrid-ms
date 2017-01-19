@@ -39,6 +39,53 @@ describe('SmartgridLesseeService use case test', ()=> {
             });
         });
     });
+    describe('#addStation(lesseeID, stationData, traceContext, callback)', ()=> {
+        context('add station from smartgrid-lessee service)', ()=> {
+            it('return false if no this lesseeID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.addStationToLessee = (lesseeID, stationData, traceContext, callback)=> {
+                    callback(null, null);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "noLesseeID";
+                let stationData = {};
+                stationData.stationID = "stationID";
+                stationData.stationName = "stationName";
+                service.addStation(lesseeID, stationData, {}, (err, stationID)=> {
+                    _.isNull(stationID).should.be.eql(true);
+                    done();
+                });
+            });
+            it('return false if no station data is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.addStationToLessee = (lesseeID, stationData, traceContext, callback)=> {
+                    callback(null, null);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "lesseeID";
+                let stationData = {};
+                service.addStation(lesseeID, stationData, {}, (err, stationID)=> {
+                    _.isNull(stationID).should.be.eql(true);
+                    done();
+                });
+            });
+            it('return true if have this lesseeID and station data', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.addStationToLessee = (lesseeID, stationData, traceContext, callback)=> {
+                    callback(null, "stationID");
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "lesseeID";
+                let stationData = {};
+                stationData.stationID = "stationID";
+                stationData.stationName = "stationName";
+                service.addStation(lesseeID, stationData, {}, (err, stationID)=> {
+                    stationID.should.be.eql("stationID");
+                    done();
+                });
+            });
+        });
+    });
     after(()=> {
         muk.restore();
     });

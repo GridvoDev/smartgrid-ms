@@ -31,6 +31,13 @@ describe('smartgridMs route use case test', ()=> {
                     }
                     callback(null, true);
                 }
+                mockSmartgridLesseeService.addStation = function (lesseeID, stationData, traceContext, callback) {
+                    if (!lesseeID || lesseeID == "noLesseeID" || !stationData || !stationData.stationID || !stationData.stationName) {
+                        callback(null, null);
+                        return;
+                    }
+                    callback(null, stationData.stationID);
+                }
                 app.set('smartgridLesseeService', mockSmartgridLesseeService);
                 server = app.listen(3001, err=> {
                     if (err) {
@@ -90,6 +97,70 @@ describe('smartgridMs route use case test', ()=> {
                         }
                         res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
                         res.body.errmsg.should.be.eql("OK");
+                        done();
+                    });
+            });
+        });
+    });
+    describe('#post:/lessees/:lesseeID/stations\n' +
+        'input:{stationID:"",stationName:""}\n' +
+        'output:{errcode:0,errmsg:"",stationID:""}', ()=> {
+        context('request for adding a station to the lessee', ()=> {
+            it('should response message with errcode:Fail if post body is illegal', done=> {
+                var lesseeID = "lesseeID";
+                var body = {};
+                request(server)
+                    .post(`/lessees/${lesseeID}/stations`)
+                    .send(body)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:Fail if no a such lessee', done=> {
+                var lesseeID = "noLesseeID";
+                var body = {
+                    stationID: "stationID",
+                    stationName: "stationName"
+                };
+                request(server)
+                    .post(`/lessees/${lesseeID}/stations`)
+                    .send(body)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:OK and stationID if success', done=> {
+                var lesseeID = "lesseeID";
+                var body = {
+                    stationID: "stationID",
+                    stationName: "stationName"
+                };
+                request(server)
+                    .post(`/lessees/${lesseeID}/stations`)
+                    .send(body)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        res.body.stationID.should.be.eql("stationID");
                         done();
                     });
             });

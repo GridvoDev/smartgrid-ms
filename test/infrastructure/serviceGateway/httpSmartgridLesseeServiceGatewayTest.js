@@ -31,6 +31,21 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
+                app.post('/lessees/:lesseeID/stations', (req, res)=> {
+                    if (req.params.lesseeID == "lesseeID" && req.body.stationID == "stationID" && req.body.stationName == "stationName") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok",
+                            stationID: "stationID"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
                 server = app.listen(3001, err=> {
                     if (err) {
                         reject(err);
@@ -73,6 +88,45 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                 //lesseeData.corpID = "";
                 gateway.registerLessee(lesseeData, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('addStationToLessee(lesseeID, stationData, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('add station to lessee', ()=> {
+            it('should return null if no this lesseeID', done=> {
+                let lesseeID = "noLesseeID";
+                let stationData = {};
+                stationData.stationID = "stationID";
+                stationData.stationName = "stationName";
+                gateway.addStationToLessee(lesseeID, stationData, traceContext, (err, stationID)=> {
+                    _.isNull(stationID).should.be.eql(true);
+                    done();
+                });
+            });
+            it('should return null if no this station data', done=> {
+                let lesseeID = "lesseeID";
+                let stationData = {};
+                gateway.addStationToLessee(lesseeID, stationData, traceContext, (err, stationID)=> {
+                    _.isNull(stationID).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let lesseeID = "lesseeID";
+                let stationData = {};
+                stationData.stationID = "stationID";
+                stationData.stationName = "stationName";
+                gateway.addStationToLessee(lesseeID, stationData, traceContext, (err, stationID)=> {
+                    stationID.should.be.eql("stationID");
                     done();
                 });
             });
