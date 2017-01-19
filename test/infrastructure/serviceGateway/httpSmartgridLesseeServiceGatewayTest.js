@@ -46,6 +46,20 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
+                app.delete('/lessees/:lesseeID/stations/:stationID', (req, res)=> {
+                    if (req.params.lesseeID == "lesseeID" && req.params.stationID == "stationID") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
                 server = app.listen(3001, err=> {
                     if (err) {
                         reject(err);
@@ -127,6 +141,41 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                 stationData.stationName = "stationName";
                 gateway.addStationToLessee(lesseeID, stationData, traceContext, (err, stationID)=> {
                     stationID.should.be.eql("stationID");
+                    done();
+                });
+            });
+        });
+    });
+    describe('delStationFromLessee(lesseeID, stationID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('del station from lessee', ()=> {
+            it('should return null if no this lesseeID', done=> {
+                let lesseeID = "noLesseeID";
+                let stationID = "stationID";
+                gateway.delStationFromLessee(lesseeID, stationID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('should return null if no this stationID', done=> {
+                let lesseeID = "lesseeID";
+                let stationID = "noStationID";
+                gateway.delStationFromLessee(lesseeID, stationID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let lesseeID = "lesseeID";
+                let stationID = "stationID";
+                gateway.delStationFromLessee(lesseeID, stationID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
                     done();
                 });
             });

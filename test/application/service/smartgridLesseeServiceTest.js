@@ -86,6 +86,49 @@ describe('SmartgridLesseeService use case test', ()=> {
             });
         });
     });
+    describe('#delStation(lesseeID, stationID, traceContext, callback)', ()=> {
+        context('del station from smartgrid-lessee service)', ()=> {
+            it('return false if no this lesseeID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.delStationFromLessee = (lesseeID, stationID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "noLesseeID";
+                let stationID = "stationID";
+                service.delStation(lesseeID, stationID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return false if no stationID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.delStationFromLessee = (lesseeID, stationID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "lesseeID";
+                let stationID = "noStationID";
+                service.delStation(lesseeID, stationID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return true if have this lesseeID and stationID', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.delStationFromLessee = (lesseeID, stationID, traceContext, callback)=> {
+                    callback(null, true);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let lesseeID = "lesseeID";
+                let stationID = "stationID";
+                service.delStation(lesseeID, stationID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
     after(()=> {
         muk.restore();
     });
