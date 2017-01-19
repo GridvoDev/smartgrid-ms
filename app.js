@@ -1,6 +1,7 @@
 'use strict';
 const kafka = require('kafka-node');
 const express = require('express');
+const bodyParser = require('body-parser');
 const {logger, tracer} = require('./lib/util');
 const {createSmartgridLesseeService} = require('./lib/application');
 const {smartgridMsRoute} = require('./lib/express');
@@ -28,6 +29,8 @@ initProducer.on('error', (err)=> {
     logger.error(err.message);
 });
 app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressZipkinMiddleware({
     tracer: tracer,
     serviceName: 'smartgrid-ms'
