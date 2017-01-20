@@ -72,7 +72,7 @@ describe('smartgridMs route use case test', ()=> {
         'input:{lesseeID:"",lesseeName:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
         context('request for register a lessee', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+            it('should response message with errcode:fail if post body is illegal', done=> {
                 var body = {};
                 request(server)
                     .post(`/lessees`)
@@ -86,11 +86,11 @@ describe('smartgridMs route use case test', ()=> {
                             return;
                         }
                         res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
-                        res.body.errmsg.should.be.eql("Fail");
+                        res.body.errmsg.should.be.eql("fail");
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:ok and isSuccess:true if success', done=> {
                 var body = {
                     lesseeID: "lesseeID",
                     lesseeName: "lesseeName"
@@ -107,7 +107,7 @@ describe('smartgridMs route use case test', ()=> {
                             return;
                         }
                         res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
-                        res.body.errmsg.should.be.eql("OK");
+                        res.body.errmsg.should.be.eql("ok");
                         done();
                     });
             });
