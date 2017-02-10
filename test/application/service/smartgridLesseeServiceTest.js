@@ -296,40 +296,40 @@ describe('SmartgridLesseeService use case test', ()=> {
             });
         });
     });
-    describe('#getDataSource(dataSourceID, traceContext, callback)', ()=> {
+    describe('#getDataSources(dataSourceID, traceContext, callback)', ()=> {
         context('get dataSource from smartgrid-lessee service)', ()=> {
             it('return false if no this dataSourceID is fail', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getDataSource = (dataSourceID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getDataSources = (dataSourceID, traceContext, callback)=> {
                     callback(null, null);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let dataSourceID = "noDataSourceID";
-                service.getDataSource(dataSourceID, {}, (err, datas)=> {
+                service.getDataSources(dataSourceID, {}, (err, datas)=> {
                     _.isNull(datas).should.be.eql(true);
                     done();
                 });
             });
             it('return true if have this dataSourceID', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getDataSource = (dataSourceID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getDataSources = (dataSourceID, traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let dataSourceID = "station-datatype-other";
-                service.getDataSource(dataSourceID, {}, (err, datas)=> {
+                service.getDataSources(dataSourceID, {}, (err, datas)=> {
                     _.isNull(datas).should.be.eql(false);
                     done();
                 });
             });
             it('return true if dataSourceID is null', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getDataSource = (dataSourceID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getDataSources = (dataSourceID, traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let dataSourceID = "";
-                service.getDataSource(dataSourceID, {}, (err, datas)=> {
+                service.getDataSources(dataSourceID, {}, (err, datas)=> {
                     _.isNull(datas).should.be.eql(false);
                     done();
                 });
