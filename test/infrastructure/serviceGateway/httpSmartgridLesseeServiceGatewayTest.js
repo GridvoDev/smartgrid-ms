@@ -60,6 +60,93 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
+                app.delete('/lessees/:lesseeID', (req, res)=> {
+                    if (req.params.lesseeID == "lesseeID") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.get('/lessees', (req, res)=> {
+                    if (req.body.lesseeID == "lesseeID" || !req.body.lesseeID) {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok",
+                            lessees: []
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.get('/stations', (req, res)=> {
+                    if (req.body.stationID == "stationID" || !req.body.stationID) {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok",
+                            lessees: []
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.post('/dataSources', (req, res)=> {
+                    if (req.body.dataSourceID == "station-datatype-other") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.delete('/dataSources/:dataSourceID', (req, res)=> {
+                    if (req.params.dataSourceID == "station-datatype-other") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.get('/dataSources', (req, res)=> {
+                    if (req.body.dataSourceID == "station-datatype-other" || !req.body.dataSourceID) {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok",
+                            datas: []
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
                 server = app.listen(3001, err=> {
                     if (err) {
                         reject(err);
@@ -99,7 +186,6 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                 let lesseeData = {};
                 lesseeData.lesseeID = "lesseeID";
                 lesseeData.lesseeName = "lesseeName";
-                //lesseeData.corpID = "";
                 gateway.registerLessee(lesseeData, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
                     done();
@@ -176,6 +262,181 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                 let stationID = "stationID";
                 gateway.delStationFromLessee(lesseeID, stationID, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('delLessee(lesseeID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('del lessee', ()=> {
+            it('should return null if no this lesseeID', done=> {
+                let lesseeID = "noLesseeID";
+                gateway.delLessee(lesseeID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let lesseeID = "lesseeID";
+                gateway.delLessee(lesseeID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getLessees(lesseeID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get lessee', ()=> {
+            it('should return null if no this lesseeID', done=> {
+                let lesseeID = "noLesseeID";
+                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
+                    _.isNull(lessees).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let lesseeID = "lesseeID";
+                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
+                    _.isNull(lessees).should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let lesseeID = "";
+                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
+                    _.isNull(lessees).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getStations(stationID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get station', ()=> {
+            it('should return null if no this stationID', done=> {
+                let stationID = "noStationID";
+                gateway.getStations(stationID, traceContext, (err, stations)=> {
+                    _.isNull(stations).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let stationID = "stationID";
+                gateway.getStations(stationID, traceContext, (err, stations)=> {
+                    _.isNull(stations).should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let stationID = "";
+                gateway.getStations(stationID, traceContext, (err, stations)=> {
+                    _.isNull(stations).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('registerDataSource(dataSource, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('register dataSource', ()=> {
+            it('fail if dataSource is illegal', done=> {
+                let dataSource = {};
+                gateway.registerDataSource(dataSource, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSource = {};
+                dataSource.dataSourceID = "station-datatype-other";
+                dataSource.dataSourceType = "dataSourceType";
+                dataSource.lessee = "lesseeID";
+                dataSource.station = "stationID";
+                gateway.registerDataSource(dataSource, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('delDataSource(dataSourceID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('del dataSource', ()=> {
+            it('should return null if no this dataSourceID', done=> {
+                let dataSourceID = "noDataSourceID";
+                gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSourceID = "station-datatype-other";
+                gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getDataSources(dataSourceID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get dataSource', ()=> {
+            it('should return null if no this dataSourceID', done=> {
+                let dataSourceID = "noDataSourceID";
+                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
+                    _.isNull(datas).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSourceID = "station-datatype-other";
+                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
+                    _.isNull(datas).should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSourceID = "";
+                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
+                    _.isNull(datas).should.be.eql(false);
                     done();
                 });
             });
