@@ -403,14 +403,14 @@ describe('smartgridMs route use case test', ()=> {
             });
         });
     });
-    describe('#post:/data-sources\n' +
+    describe('#post:/\n' +
         'input:{dataSourceID:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
         context('request for register a dataSource', ()=> {
             it('should response message with errcode:Fail if post body is illegal', done=> {
                 var body = {};
                 request(server)
-                    .post(`/data-sources`)
+                    .post(`/`)
                     .send(body)
                     .set('Accept', 'application/json')
                     .expect(200)
@@ -433,7 +433,7 @@ describe('smartgridMs route use case test', ()=> {
                     lessee: "lesseeID"
                 };
                 request(server)
-                    .post(`/data-sources`)
+                    .post(`/`)
                     .send(body)
                     .set('Accept', 'application/json')
                     .expect(200)
