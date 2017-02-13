@@ -104,7 +104,7 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
-                app.post('/', (req, res)=> {
+                app.post('/dataSources', (req, res)=> {
                     if (req.body.dataSourceID == "station-datatype-other") {
                         res.json({
                             errcode: 0,
