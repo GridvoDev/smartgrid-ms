@@ -229,6 +229,7 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                 let lesseeData = {};
                 lesseeData.lesseeID = "lesseeID";
                 lesseeData.lesseeName = "lesseeName";
+                lesseeData.corpID = "corpID"
                 gateway.registerLessee(lesseeData, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
                     done();

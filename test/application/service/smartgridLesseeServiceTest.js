@@ -31,7 +31,7 @@ describe('SmartgridLesseeService use case test', ()=> {
                 let lesseeData = {};
                 lesseeData.lesseeID = "lesseeID";
                 lesseeData.lesseeName = "lesseeName";
-                lesseeData.corpID = "";
+                lesseeData.corpID = "corpID";
                 service.addLessee(lesseeData, {}, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
                     done();
