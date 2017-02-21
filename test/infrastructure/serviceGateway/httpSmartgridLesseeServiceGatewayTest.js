@@ -104,8 +104,8 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
-                app.post('/dataSources', (req, res)=> {
-                    if (req.body.dataSourceID == "station-datatype-other") {
+                app.post('/data-sources', (req, res)=> {
+                    if (req.body.dataSourceID == "station-type-other" && req.body.dataType == "dataType" && req.body.station == "stationID" && req.body.lessee == "lesseeID") {
                         res.json({
                             errcode: 0,
                             errmsg: "ok"
@@ -400,7 +400,7 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
             });
         });
     });
-    describe('registerDataSource(dataSource, traceContext, callback)', ()=> {
+    describe('registerDataSource(dataSourceData, traceContext, callback)', ()=> {
         let traceContext = new TraceContext({
             traceID: "aaa",
             parentID: "bbb",
@@ -410,19 +410,19 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
         });
         context('register dataSource', ()=> {
             it('fail if dataSource is illegal', done=> {
-                let dataSource = {};
-                gateway.registerDataSource(dataSource, traceContext, (err, isSuccess)=> {
+                let dataSourceData = {};
+                gateway.registerDataSource(dataSourceData, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(false);
                     done();
                 });
             });
             it('is ok', done=> {
-                let dataSource = {};
-                dataSource.dataSourceID = "station-datatype-other";
-                dataSource.dataSourceType = "dataSourceType";
-                dataSource.lessee = "lesseeID";
-                dataSource.station = "stationID";
-                gateway.registerDataSource(dataSource, traceContext, (err, isSuccess)=> {
+                let dataSourceData = {};
+                dataSourceData.dataSourceID = "station-type-other";
+                dataSourceData.dataType = "dataType";
+                dataSourceData.station = "stationID";
+                dataSourceData.lessee = "lesseeID";
+                gateway.registerDataSource(dataSourceData, traceContext, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
                     done();
                 });
