@@ -3,7 +3,7 @@ const kafka = require('kafka-node');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {logger, tracer} = require('./lib/util');
-const {createSmartgridLesseeService} = require('./lib/application');
+const {createSmartgridLesseeService,createDataCollectService} = require('./lib/application');
 const {smartgridMsRoute} = require('./lib/express');
 const {expressZipkinMiddleware} = require("gridvo-common-js");
 
@@ -37,7 +37,9 @@ app.use(expressZipkinMiddleware({
 }));
 app.use('/', smartgridMsRoute);
 let smartgridLesseeService = createSmartgridLesseeService();
+let dataCollectService = createDataCollectService();
 app.set('smartgridLesseeService', smartgridLesseeService);
+app.set('dataCollectService', dataCollectService);
 app.listen(3001, (err)=> {
     if (err) {
         logger.error(err.message);

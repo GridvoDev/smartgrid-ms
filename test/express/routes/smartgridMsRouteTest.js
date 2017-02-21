@@ -24,6 +24,7 @@ describe('smartgridMs route use case test', ()=> {
                 }));
                 app.use('/', smartgridMsRoute);
                 let mockSmartgridLesseeService = {};
+                let mockDataCollectService ={};
                 mockSmartgridLesseeService.addLessee = function (lesseeData, traceContext, callback) {
                     if (!lesseeData || !lesseeData.lesseeID || !lesseeData.lesseeName || !lesseeData.corpID) {
                         callback(null, false);
@@ -70,21 +71,21 @@ describe('smartgridMs route use case test', ()=> {
                     }
                     callback(null, []);
                 }
-                mockSmartgridLesseeService.addDataSource = function (dataSource, traceContext, callback) {
-                    if (!dataSource || !dataSource.dataSourceID || !dataSource.lessee || !dataSource.station || !dataSource.dataType) {
+                mockDataCollectService.addDataSource = function (dataSourceData, traceContext, callback) {
+                    if (!dataSourceData || !dataSourceData.dataSourceID || !dataSourceData.lessee || !dataSourceData.station || !dataSourceData.dataType) {
                         callback(null, false);
                         return;
                     }
                     callback(null, true);
                 }
-                mockSmartgridLesseeService.delDataSource = function (dataSourceID, traceContext, callback) {
+                mockDataCollectService.delDataSource = function (dataSourceID, traceContext, callback) {
                     if (!dataSourceID || dataSourceID == "noDataSourceID") {
                         callback(null, false);
                         return;
                     }
                     callback(null, true);
                 };
-                mockSmartgridLesseeService.getDataSources = function (dataSourceID, traceContext, callback) {
+                mockDataCollectService.getDataSources = function (dataSourceID, traceContext, callback) {
                     if (dataSourceID == "noDataSourceID") {
                         callback(null, null);
                         return;
@@ -113,6 +114,7 @@ describe('smartgridMs route use case test', ()=> {
                     callback(null, []);
                 };
                 app.set('smartgridLesseeService', mockSmartgridLesseeService);
+                app.set('dataCollectService', mockDataCollectService);
                 server = app.listen(3001, err=> {
                     if (err) {
                         reject(err);
