@@ -25,7 +25,7 @@ describe('smartgridMs route use case test', ()=> {
                 app.use('/', smartgridMsRoute);
                 let mockSmartgridLesseeService = {};
                 mockSmartgridLesseeService.addLessee = function (lesseeData, traceContext, callback) {
-                    if (!lesseeData || !lesseeData.lesseeID || !lesseeData.lesseeName) {
+                    if (!lesseeData || !lesseeData.lesseeID || !lesseeData.lesseeName || !lesseeData.corpID) {
                         callback(null, false);
                         return;
                     }
@@ -156,7 +156,8 @@ describe('smartgridMs route use case test', ()=> {
             it('should response message with errcode:ok and isSuccess:true if success', done=> {
                 var body = {
                     lesseeID: "lesseeID",
-                    lesseeName: "lesseeName"
+                    lesseeName: "lesseeName",
+                    corpID: "corpID"
                 };
                 request(server)
                     .post(`/lessees`)
