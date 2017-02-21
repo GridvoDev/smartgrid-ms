@@ -147,6 +147,49 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
                         });
                     }
                 });
+                app.post('/permissions', (req, res)=> {
+                    if (req.body.permissionID == "permissionID" && req.body.permissionName == "permissionName") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.delete('/permissions/:permissionID', (req, res)=> {
+                    if (req.params.permissionID == "permissionID") {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
+                app.get('/permissions', (req, res)=> {
+                    if (req.body.permissionID == "permissionID" || !req.body.permissionID) {
+                        res.json({
+                            errcode: 0,
+                            errmsg: "ok",
+                            permission: {}
+                        });
+                    }
+                    else {
+                        res.json({
+                            errcode: 400,
+                            errmsg: "fail"
+                        });
+                    }
+                });
                 server = app.listen(3001, err=> {
                     if (err) {
                         reject(err);
@@ -303,22 +346,22 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
         context('get lessee', ()=> {
             it('should return null if no this lesseeID', done=> {
                 let lesseeID = "noLesseeID";
-                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
-                    _.isNull(lessees).should.be.eql(true);
+                gateway.getLessees(lesseeID, traceContext, (err, lesseesJSON)=> {
+                    _.isNull(lesseesJSON).should.be.eql(true);
                     done();
                 });
             });
             it('is ok', done=> {
                 let lesseeID = "lesseeID";
-                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
-                    _.isNull(lessees).should.be.eql(false);
+                gateway.getLessees(lesseeID, traceContext, (err, lesseesJSON)=> {
+                    _.isNull(lesseesJSON).should.be.eql(false);
                     done();
                 });
             });
             it('is ok', done=> {
                 let lesseeID = "";
-                gateway.getLessees(lesseeID, traceContext, (err, lessees)=> {
-                    _.isNull(lessees).should.be.eql(false);
+                gateway.getLessees(lesseeID, traceContext, (err, lesseesJSON)=> {
+                    _.isNull(lesseesJSON).should.be.eql(false);
                     done();
                 });
             });
@@ -335,22 +378,22 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
         context('get station', ()=> {
             it('should return null if no this stationID', done=> {
                 let stationID = "noStationID";
-                gateway.getStations(stationID, traceContext, (err, stations)=> {
-                    _.isNull(stations).should.be.eql(true);
+                gateway.getStations(stationID, traceContext, (err, stationsJSON)=> {
+                    _.isNull(stationsJSON).should.be.eql(true);
                     done();
                 });
             });
             it('is ok', done=> {
                 let stationID = "stationID";
-                gateway.getStations(stationID, traceContext, (err, stations)=> {
-                    _.isNull(stations).should.be.eql(false);
+                gateway.getStations(stationID, traceContext, (err, stationsJSON)=> {
+                    _.isNull(stationsJSON).should.be.eql(false);
                     done();
                 });
             });
             it('is ok', done=> {
                 let stationID = "";
-                gateway.getStations(stationID, traceContext, (err, stations)=> {
-                    _.isNull(stations).should.be.eql(false);
+                gateway.getStations(stationID, traceContext, (err, stationsJSON)=> {
+                    _.isNull(stationsJSON).should.be.eql(false);
                     done();
                 });
             });
@@ -421,22 +464,106 @@ describe('HttpSmartgridLesseeServiceGateway use case test', ()=> {
         context('get dataSource', ()=> {
             it('should return null if no this dataSourceID', done=> {
                 let dataSourceID = "noDataSourceID";
-                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
-                    _.isNull(datas).should.be.eql(true);
+                gateway.getDataSources(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
+                    _.isNull(dataSourcesJSON).should.be.eql(true);
                     done();
                 });
             });
             it('is ok', done=> {
                 let dataSourceID = "station-datatype-other";
-                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
-                    _.isNull(datas).should.be.eql(false);
+                gateway.getDataSources(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
+                    _.isNull(dataSourcesJSON).should.be.eql(false);
                     done();
                 });
             });
             it('is ok', done=> {
                 let dataSourceID = "";
-                gateway.getDataSources(dataSourceID, traceContext, (err, datas)=> {
-                    _.isNull(datas).should.be.eql(false);
+                gateway.getDataSources(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
+                    _.isNull(dataSourcesJSON).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('registerPermission(permissionData, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('register permission', ()=> {
+            it('fail if permission is illegal', done=> {
+                let permissionData = {};
+                gateway.registerPermission(permissionData, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let permissionData = {};
+                permissionData.permissionID = "permissionID";
+                permissionData.permissionName = "permissionName";
+                gateway.registerPermission(permissionData, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('delPermission(permissionID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('del permission', ()=> {
+            it('should return null if no this permissionID', done=> {
+                let permissionID = "noPermissionID";
+                gateway.delPermission(permissionID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let permissionID = "permissionID";
+                gateway.delPermission(permissionID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getPermission(permissionID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get permission', ()=> {
+            it('should return null if no this permissionID', done=> {
+                let permissionID = "noPermissionID";
+                gateway.getPermission(permissionID, traceContext, (err, permissionJSON)=> {
+                    _.isNull(permissionJSON).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let permissionID = "permissionID";
+                gateway.getPermission(permissionID, traceContext, (err, permissionJSON)=> {
+                    _.isNull(permissionJSON).should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let permissionID = "";
+                gateway.getPermission(permissionID, traceContext, (err, permissionJSON)=> {
+                    _.isNull(permissionJSON).should.be.eql(false);
                     done();
                 });
             });

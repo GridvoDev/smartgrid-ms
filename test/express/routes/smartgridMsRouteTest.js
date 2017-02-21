@@ -91,6 +91,27 @@ describe('smartgridMs route use case test', ()=> {
                     }
                     callback(null, []);
                 };
+                mockSmartgridLesseeService.addPermission = function (permissionData, traceContext, callback) {
+                    if (!permissionData || !permissionData.permissionID || !permissionData.permissionName) {
+                        callback(null, false);
+                        return;
+                    }
+                    callback(null, true);
+                };
+                mockSmartgridLesseeService.delPermission = function (permissionID, traceContext, callback) {
+                    if (!permissionID || permissionID == "noPermissionID") {
+                        callback(null, false);
+                        return;
+                    }
+                    callback(null, true);
+                };
+                mockSmartgridLesseeService.getPermission = function (permissionID, traceContext, callback) {
+                    if (permissionID == "noPermissionID") {
+                        callback(null, null);
+                        return;
+                    }
+                    callback(null, []);
+                };
                 app.set('smartgridLesseeService', mockSmartgridLesseeService);
                 server = app.listen(3001, err=> {
                     if (err) {
@@ -404,7 +425,7 @@ describe('smartgridMs route use case test', ()=> {
         });
     });
     describe('#post:/dataSources\n' +
-        'input:{dataSourceID:""}\n' +
+        'input:{dataSourceData:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
         context('request for register a dataSource', ()=> {
             it('should response message with errcode:Fail if post body is illegal', done=> {
@@ -453,7 +474,7 @@ describe('smartgridMs route use case test', ()=> {
     describe('#get:/dataSources\n' +
         'input:{dataSourceID:""}\n' +
         'output:{errcode:0,errmsg:"",datas:""}', ()=> {
-        context('request for get lessee', ()=> {
+        context('request for get dataSource', ()=> {
             it('should response message with errcode:Fail if post body is illegal', done=> {
                 request(server)
                     .get(`/dataSources?dataSourceID=noDataSourceID`)
@@ -501,7 +522,7 @@ describe('smartgridMs route use case test', ()=> {
     describe('#delete:/dataSources/:dataSourceID\n' +
         'input:{dataSourceID:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for delete a lessee', ()=> {
+        context('request for delete a dataSource', ()=> {
             it('should response message with errcode:Fail if no a such dataSource', done=> {
                 var dataSourceID = "noDataSourceID";
                 request(server)
@@ -534,6 +555,135 @@ describe('smartgridMs route use case test', ()=> {
             });
         });
     });
+    describe('#post:/permissions\n' +
+        'input:{permissionData:""}\n' +
+        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
+        context('request for register a permission', ()=> {
+            it('should response message with errcode:Fail if post body is illegal', done=> {
+                var body = {};
+                request(server)
+                    .post(`/permissions`)
+                    .send(body)
+                    .set('Accept', 'application/json')
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        res.body.errmsg.should.be.eql("fail");
+                        done();
+                    });
+            });
+            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+                var body = {
+                    permissionID: "permissionID",
+                    permissionName: "permissionName"
+                };
+                request(server)
+                    .post(`/permissions`)
+                    .send(body)
+                    .set('Accept', 'application/json')
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        res.body.errmsg.should.be.eql("ok");
+                        done();
+                    });
+            });
+        });
+    });
+    describe('#get:/permissions\n' +
+        'input:{permissionID:""}\n' +
+        'output:{errcode:0,errmsg:"",datas:""}', ()=> {
+        context('request for get permission', ()=> {
+            it('should response message with errcode:Fail if post body is illegal', done=> {
+                request(server)
+                    .get(`/permissions?permissionID=noPermissionID`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:ok', done=> {
+                request(server)
+                    .get(`/permissions?permissionID=`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:ok', done=> {
+                request(server)
+                    .get(`/permissions?permissionID=permissionID`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+        });
+    });
+    // describe('#delete:/permissions/:permissionID\n' +
+    //     'input:{permissionID:""}\n' +
+    //     'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
+    //     context('request for delete a permission', ()=> {
+    //         it('should response message with errcode:Fail if no a such permission', done=> {
+    //             var permissionID = "noPermissionID";
+    //             request(server)
+    //                 .del(`/permissions/${permissionID}`)
+    //                 .expect(200)
+    //                 .expect('Content-Type', /json/)
+    //                 .end((err, res)=> {
+    //                     if (err) {
+    //                         done(err);
+    //                         return;
+    //                     }
+    //                     res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+    //                     done();
+    //                 });
+    //         });
+    //         it('should response message with errcode:OK and isSuccess:true if success', done=> {
+    //             var permissionID = "permissionIDr";
+    //             request(server)
+    //                 .del(`/permissions/${permissionID}`)
+    //                 .expect(200)
+    //                 .expect('Content-Type', /json/)
+    //                 .end((err, res)=> {
+    //                     if (err) {
+    //                         done(err);
+    //                         return;
+    //                     }
+    //                     res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+    //                     done();
+    //                 });
+    //         });
+    //     });
+    // });
     after(done=> {
         function teardownExpress() {
             return new Promise((resolve, reject)=> {
