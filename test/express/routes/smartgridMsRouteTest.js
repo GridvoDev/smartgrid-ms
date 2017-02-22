@@ -85,11 +85,14 @@ describe('smartgridMs route use case test', ()=> {
                     }
                     callback(null, true);
                 };
-                mockDataCollectService.getDataSources = function (dataSourceID, traceContext, callback) {
-                    if (dataSourceID == "noDataSourceID") {
+                mockDataCollectService.getDataSource = function (dataSourceID, traceContext, callback) {
+                    if (!dataSourceID || dataSourceID == "noDataSourceID") {
                         callback(null, null);
                         return;
                     }
+                    callback(null, []);
+                };
+                mockDataCollectService.getDataSources = function (queryOpts, traceContext, callback) {
                     callback(null, []);
                 };
                 mockSmartgridLesseeService.addPermission = function (permissionData, traceContext, callback) {
@@ -474,90 +477,98 @@ describe('smartgridMs route use case test', ()=> {
             });
         });
     });
-    // describe('#get:/dataSources\n' +
-    //     'input:{dataSourceID:""}\n' +
-    //     'output:{errcode:0,errmsg:"",datas:""}', ()=> {
-    //     context('request for get dataSource', ()=> {
-    //         it('should response message with errcode:Fail if post body is illegal', done=> {
-    //             request(server)
-    //                 .get(`/dataSources?dataSourceID=noDataSourceID`)
-    //                 .expect(200)
-    //                 .expect('Content-Type', /json/)
-    //                 .end((err, res)=> {
-    //                     if (err) {
-    //                         done(err);
-    //                         return;
-    //                     }
-    //                     res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
-    //                     done();
-    //                 });
-    //         });
-    //         it('should response message with errcode:ok', done=> {
-    //             request(server)
-    //                 .get(`/dataSources?dataSourceID=`)
-    //                 .expect(200)
-    //                 .expect('Content-Type', /json/)
-    //                 .end((err, res)=> {
-    //                     if (err) {
-    //                         done(err);
-    //                         return;
-    //                     }
-    //                     res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
-    //                     done();
-    //                 });
-    //         });
-    //         it('should response message with errcode:ok', done=> {
-    //             request(server)
-    //                 .get(`/dataSources?dataSourceID=station-datatype-other`)
-    //                 .expect(200)
-    //                 .expect('Content-Type', /json/)
-    //                 .end((err, res)=> {
-    //                     if (err) {
-    //                         done(err);
-    //                         return;
-    //                     }
-    //                     res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
-    //                     done();
-    //                 });
-    //         });
-    //     });
-    // });
-    // describe('#delete:/dataSources/:dataSourceID\n' +
-    //     'input:{dataSourceID:""}\n' +
-    //     'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-    //     context('request for delete a dataSource', ()=> {
-    //         it('should response message with errcode:Fail if no a such dataSource', done=> {
-    //             var dataSourceID = "noDataSourceID";
-    //             request(server)
-    //                 .del(`/dataSources/${dataSourceID}`)
-    //                 .expect(200)
-    //                 .expect('Content-Type', /json/)
-    //                 .end((err, res)=> {
-    //                     if (err) {
-    //                         done(err);
-    //                         return;
-    //                     }
-    //                     res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
-    //                     done();
-    //                 });
-    //         });
-    //         it('should response message with errcode:OK and isSuccess:true if success', done=> {
-    //             var dataSourceID = "station-datatype-other";
-    //             request(server)
-    //                 .del(`/dataSources/${dataSourceID}`)
-    //                 .expect(200)
-    //                 .expect('Content-Type', /json/)
-    //                 .end((err, res)=> {
-    //                     if (err) {
-    //                         done(err);
-    //                         return;
-    //                     }
-    //                     res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
-    //                     done();
-    //                 });
-    //         });
-    //     });
-    // });
+    describe('#get:/data-sources/dataSourceID\n' +
+        'input:{dataSourceID:""}\n' +
+        'output:{errcode:0,errmsg:"",dataSource:""}', ()=> {
+        context('request for get dataSource', ()=> {
+            it('should response message with errcode:Fail if post body is illegal', done=> {
+                let dataSourceID = "noDataSourceID";
+                request(server)
+                    .get(`/data-sources/${dataSourceID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:ok', done=> {
+                let dataSourceID = "station-type-other";
+                request(server)
+                    .get(`/data-sources/${dataSourceID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+        });
+    });
+    describe('#get:/data-sources\n' +
+        'input:{queryOpts:""}\n' +
+        'output:{errcode:0,errmsg:"",dataSources:""}', ()=> {
+        context('request for get dataSources', ()=> {
+            it('should response message with errcode:ok', done=> {
+                request(server)
+                    .get(`/data-sources?queryOpts=`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+        });
+    });
+    describe('#delete:/data-sources/:dataSourceID\n' +
+        'input:{dataSourceID:""}\n' +
+        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
+        context('request for delete a dataSource', ()=> {
+            it('should response message with errcode:Fail if no a such dataSource', done=> {
+                let dataSourceID = "noDataSourceID";
+                request(server)
+                    .del(`/data-sources/${dataSourceID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+                let dataSourceID = "station-type-other";
+                request(server)
+                    .del(`/data-sources/${dataSourceID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res)=> {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+        });
+    });
     describe('#post:/permissions\n' +
         'input:{permissionData:""}\n' +
         'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {

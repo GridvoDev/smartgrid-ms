@@ -60,7 +60,7 @@ describe('HttpDataCollectServiceGateway use case test', ()=> {
                     }
                 });
                 app.get('/data-sources', (req, res)=> {
-                    if (!req.body.dataType) {
+                    if (!req.body) {
                         res.json({
                             errcode: 0,
                             errmsg: "ok",
@@ -122,80 +122,73 @@ describe('HttpDataCollectServiceGateway use case test', ()=> {
             });
         });
     });
-    // describe('delDataSource(dataSourceID, traceContext, callback)', ()=> {
-    //     let traceContext = new TraceContext({
-    //         traceID: "aaa",
-    //         parentID: "bbb",
-    //         spanID: "ccc",
-    //         flags: 1,
-    //         step: 3
-    //     });
-    //     context('del dataSource', ()=> {
-    //         it('should return null if no this dataSourceID', done=> {
-    //             let dataSourceID = "noDataSourceID";
-    //             gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
-    //                 isSuccess.should.be.eql(false);
-    //                 done();
-    //             });
-    //         });
-    //         it('is ok', done=> {
-    //             let dataSourceID = "station-type-other";
-    //             gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
-    //                 isSuccess.should.be.eql(true);
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
-    // describe('getDataSource(dataSourceID, traceContext, callback)', ()=> {
-    //     let traceContext = new TraceContext({
-    //         traceID: "aaa",
-    //         parentID: "bbb",
-    //         spanID: "ccc",
-    //         flags: 1,
-    //         step: 3
-    //     });
-    //     context('get dataSource', ()=> {
-    //         it('should return null if no this dataSourceID', done=> {
-    //             let dataSourceID = "noDataSourceID";
-    //             gateway.getDataSource(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
-    //                 _.isNull(dataSourcesJSON).should.be.eql(true);
-    //                 done();
-    //             });
-    //         });
-    //         it('is ok', done=> {
-    //             let dataSourceID = "station-datatype-other";
-    //             gateway.getDataSource(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
-    //                 _.isNull(dataSourcesJSON).should.be.eql(false);
-    //                 done();
-    //             });
-    //         });
-    //         it('is ok', done=> {
-    //             let dataSourceID = "";
-    //             gateway.getDataSource(dataSourceID, traceContext, (err, dataSourcesJSON)=> {
-    //                 _.isNull(dataSourcesJSON).should.be.eql(false);
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
-    // describe('getDataSources(queryOpts， traceContext, callback)', ()=> {
-    //     let traceContext = new TraceContext({
-    //         traceID: "aaa",
-    //         parentID: "bbb",
-    //         spanID: "ccc",
-    //         flags: 1,
-    //         step: 3
-    //     });
-    //     context('get dataSource', ()=> {
-    //         it('is ok', done=> {
-    //             gateway.getDataSources({}, traceContext, (err, dataSourcesJSON)=> {
-    //                 _.isNull(dataSourcesJSON).should.be.eql(false);
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
+    describe('delDataSource(dataSourceID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('del dataSource', ()=> {
+            it('should return null if no this dataSourceID', done=> {
+                let dataSourceID = "noDataSourceID";
+                gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSourceID = "station-type-other";
+                gateway.delDataSource(dataSourceID, traceContext, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getDataSource(dataSourceID, traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get dataSource', ()=> {
+            it('should return null if no this dataSourceID', done=> {
+                let dataSourceID = "noDataSourceID";
+                gateway.getDataSource(dataSourceID, traceContext, (err, dataSource)=> {
+                    _.isNull(dataSource).should.be.eql(true);
+                    done();
+                });
+            });
+            it('is ok', done=> {
+                let dataSourceID = "station-datatype-other";
+                gateway.getDataSource(dataSourceID, traceContext, (err, dataSource)=> {
+                    _.isNull(dataSource).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('getDataSources(queryOpts， traceContext, callback)', ()=> {
+        let traceContext = new TraceContext({
+            traceID: "aaa",
+            parentID: "bbb",
+            spanID: "ccc",
+            flags: 1,
+            step: 3
+        });
+        context('get dataSource', ()=> {
+            it('is ok', done=> {
+                gateway.getDataSources({}, traceContext, (err, dataSources)=> {
+                    _.isNull(dataSources).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
     after(done=> {
         function teardownExpress() {
             return new Promise((resolve, reject)=> {
