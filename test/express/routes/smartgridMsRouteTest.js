@@ -9,12 +9,12 @@ const smartgridMsRoute = require('../../../lib/express/routes/smartgridMsRoute.j
 const errCodeTable = require('../../../lib/express/util/errCode.js');
 const {expressZipkinMiddleware, createZipkinTracer} = require("gridvo-common-js");
 
-describe('smartgridMs route use case test', ()=> {
+describe('smartgridMs route use case test', () => {
     let app;
     let server;
-    before(done=> {
+    before(done => {
         function setupExpress() {
-            return new Promise((resolve, reject)=> {
+            return new Promise((resolve, reject) => {
                 app = express();
                 app.use(bodyParser.json());
                 app.use(bodyParser.urlencoded({extended: false}));
@@ -24,21 +24,21 @@ describe('smartgridMs route use case test', ()=> {
                 }));
                 app.use('/', smartgridMsRoute);
                 let mockSmartgridLesseeService = {};
-                let mockDataCollectService ={};
+                let mockDataCollectService = {};
                 mockSmartgridLesseeService.addLessee = function (lesseeData, traceContext, callback) {
                     if (!lesseeData || !lesseeData.lesseeID || !lesseeData.lesseeName || !lesseeData.corpID) {
                         callback(null, false);
                         return;
                     }
                     callback(null, true);
-                }
+                };
                 mockSmartgridLesseeService.addStation = function (lesseeID, stationData, traceContext, callback) {
                     if (!lesseeID || lesseeID == "noLesseeID" || !stationData || !stationData.stationID || !stationData.stationName) {
                         callback(null, null);
                         return;
                     }
                     callback(null, stationData.stationID);
-                }
+                };
                 mockSmartgridLesseeService.delStation = function (lesseeID, stationID, traceContext, callback) {
                     if (!lesseeID || !stationID) {
                         callback(null, false);
@@ -49,35 +49,41 @@ describe('smartgridMs route use case test', ()=> {
                         return;
                     }
                     callback(null, true);
-                }
+                };
                 mockSmartgridLesseeService.delLessee = function (lesseeID, traceContext, callback) {
                     if (!lesseeID || lesseeID == "noLesseeID") {
                         callback(null, false);
                         return;
                     }
                     callback(null, true);
-                }
-                mockSmartgridLesseeService.getLessees = function (lesseeID, traceContext, callback) {
-                    if (lesseeID == "noLesseeID") {
+                };
+                mockSmartgridLesseeService.getLessee = function (lesseeID, traceContext, callback) {
+                    if (!lesseeID || lesseeID == "noLesseeID") {
                         callback(null, null);
                         return;
                     }
                     callback(null, []);
-                }
-                mockSmartgridLesseeService.getStations = function (stationID, traceContext, callback) {
-                    if (stationID == "noStationID") {
+                };
+                mockSmartgridLesseeService.getLessees = function (traceContext, callback) {
+                    callback(null, []);
+                };
+                mockSmartgridLesseeService.getStation = function (stationID, traceContext, callback) {
+                    if (!stationID || stationID == "noStationID") {
                         callback(null, null);
                         return;
                     }
                     callback(null, []);
-                }
+                };
+                mockSmartgridLesseeService.getStations = function (traceContext, callback) {
+                    callback(null, []);
+                };
                 mockDataCollectService.addDataSource = function (dataSourceData, traceContext, callback) {
                     if (!dataSourceData || !dataSourceData.dataSourceID || !dataSourceData.lessee || !dataSourceData.station || !dataSourceData.dataType) {
                         callback(null, false);
                         return;
                     }
                     callback(null, true);
-                }
+                };
                 mockDataCollectService.delDataSource = function (dataSourceID, traceContext, callback) {
                     if (!dataSourceID || dataSourceID == "noDataSourceID") {
                         callback(null, false);
@@ -110,15 +116,18 @@ describe('smartgridMs route use case test', ()=> {
                     callback(null, true);
                 };
                 mockSmartgridLesseeService.getPermission = function (permissionID, traceContext, callback) {
-                    if (permissionID == "noPermissionID") {
+                    if (!permissionID || permissionID == "noPermissionID") {
                         callback(null, null);
                         return;
                     }
                     callback(null, []);
                 };
+                mockSmartgridLesseeService.getPermissions = function (traceContext, callback) {
+                    callback(null, []);
+                };
                 app.set('smartgridLesseeService', mockSmartgridLesseeService);
                 app.set('dataCollectService', mockDataCollectService);
-                server = app.listen(3001, err=> {
+                server = app.listen(3001, err => {
                     if (err) {
                         reject(err);
                     } else {
@@ -130,17 +139,17 @@ describe('smartgridMs route use case test', ()=> {
         function* setup() {
             yield setupExpress();
         };
-        co(setup).then(()=> {
+        co(setup).then(() => {
             done();
-        }).catch(err=> {
+        }).catch(err => {
             done(err);
         });
     });
     describe('#post:/lessees\n' +
         'input:{lesseeID:"",lesseeName:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for register a lessee', ()=> {
-            it('should response message with errcode:fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for register a lessee', () => {
+            it('should response message with errcode:fail if post body is illegal', done => {
                 var body = {};
                 request(server)
                     .post(`/lessees`)
@@ -148,7 +157,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -158,7 +167,7 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:ok and isSuccess:true if success', done=> {
+            it('should response message with errcode:ok and isSuccess:true if success', done => {
                 var body = {
                     lesseeID: "lesseeID",
                     lesseeName: "lesseeName",
@@ -170,7 +179,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -184,9 +193,9 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#post:/lessees/:lesseeID/stations\n' +
         'input:{stationID:"",stationName:""}\n' +
-        'output:{errcode:0,errmsg:"",stationID:""}', ()=> {
-        context('request for adding a station to the lessee', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",stationID:""}', () => {
+        context('request for adding a station to the lessee', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
                 var lesseeID = "lesseeID";
                 var body = {};
                 request(server)
@@ -194,7 +203,7 @@ describe('smartgridMs route use case test', ()=> {
                     .send(body)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -203,7 +212,7 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:Fail if no a such lessee', done=> {
+            it('should response message with errcode:Fail if no a such lessee', done => {
                 var lesseeID = "noLesseeID";
                 var body = {
                     stationID: "stationID",
@@ -214,7 +223,7 @@ describe('smartgridMs route use case test', ()=> {
                     .send(body)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -223,7 +232,7 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and stationID if success', done=> {
+            it('should response message with errcode:OK and stationID if success', done => {
                 var lesseeID = "lesseeID";
                 var body = {
                     stationID: "stationID",
@@ -234,7 +243,7 @@ describe('smartgridMs route use case test', ()=> {
                     .send(body)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -248,16 +257,16 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#delete:/lessees/:lesseeID/stations/:stationID\n' +
         'input:{stationID:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for delete a station to the lessee', ()=> {
-            it('should response message with errcode:Fail if no a such lessee', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for delete a station to the lessee', () => {
+            it('should response message with errcode:Fail if no a such lessee', done => {
                 var lesseeID = "noLesseeID";
                 var stationID = "stationID";
                 request(server)
                     .del(`/lessees/${lesseeID}/stations/${stationID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -266,14 +275,14 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:Fail if no a such station', done=> {
+            it('should response message with errcode:Fail if no a such station', done => {
                 var lesseeID = "lesseeID";
                 var stationID = "noStationID";
                 request(server)
                     .del(`/lessees/${lesseeID}/stations/${stationID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -282,14 +291,14 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:OK and isSuccess:true if success', done => {
                 var lesseeID = "lesseeID";
                 var stationID = "stationID";
                 request(server)
                     .del(`/lessees/${lesseeID}/stations/${stationID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -302,15 +311,15 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#delete:/lessees/:lesseeID\n' +
         'input:{lesseeID:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for delete a lessee', ()=> {
-            it('should response message with errcode:Fail if no a such lessee', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for delete a lessee', () => {
+            it('should response message with errcode:Fail if no a such lessee', done => {
                 var lesseeID = "noLesseeID";
                 request(server)
                     .del(`/lessees/${lesseeID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -319,13 +328,49 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:OK and isSuccess:true if success', done => {
                 var lesseeID = "lesseeID";
                 request(server)
                     .del(`/lessees/${lesseeID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
+                        done();
+                    });
+            });
+        });
+    });
+    describe('#get:/lessees/:lesseeID\n' +
+        'input:{lesseeID:""}\n' +
+        'output:{errcode:0,errmsg:"",lessee:""}', () => {
+        context('request for get lessee', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
+                let lesseeID = "noLesseeID";
+                request(server)
+                    .get(`/lessees/${lesseeID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res) => {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:ok', done => {
+                let lesseeID = "lesseeID";
+                request(server)
+                    .get(`/lessees/${lesseeID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -337,28 +382,14 @@ describe('smartgridMs route use case test', ()=> {
         });
     });
     describe('#get:/lessees\n' +
-        'output:{errcode:0,errmsg:"",lessees:""}', ()=> {
-        context('request for delete a lessee', ()=> {
-            it('should response message with errcode:Fail if no a such lessee', done=> {
+        'output:{errcode:0,errmsg:"",lessees:""}', () => {
+        context('request for get lessee', () => {
+            it('should response message with errcode:ok', done => {
                 request(server)
-                    .get(`/lessees?lesseeID=noLesseeID`)
+                    .get(`/lessees`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
-                        if (err) {
-                            done(err);
-                            return;
-                        }
-                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
-                        done();
-                    });
-            });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
-                request(server)
-                    .get(`/lessees?lesseeID=lesseeID`)
-                    .expect(200)
-                    .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -367,12 +398,34 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+        });
+    });
+    describe('#get:/stations:/stationID\n' +
+        'input:{stationID:""}\n' +
+        'output:{errcode:0,errmsg:"",station:""}', () => {
+        context('request for get station', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
+                let stationID = "noStationID";
                 request(server)
-                    .get(`/lessees?lesseeID=`)
+                    .get(`/stations/${stationID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
+                        done();
+                    });
+            });
+            it('should response message with errcode:ok', done => {
+                let stationID = "stationID";
+                request(server)
+                    .get(`/stations/${stationID}`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -384,42 +437,14 @@ describe('smartgridMs route use case test', ()=> {
         });
     });
     describe('#get:/stations\n' +
-        'output:{errcode:0,errmsg:"",stations:""}', ()=> {
-        context('request for delete a station', ()=> {
-            it('should response message with errcode:Fail if no a such station', done=> {
+        'output:{errcode:0,errmsg:"",stations:""}', () => {
+        context('request for get station', () => {
+            it('should response message with errcode:ok', done => {
                 request(server)
-                    .get(`/stations?stationID=noStationID`)
+                    .get(`/stations`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
-                        if (err) {
-                            done(err);
-                            return;
-                        }
-                        res.body.errcode.should.be.eql(errCodeTable.FAIL.errCode);
-                        done();
-                    });
-            });
-            it('should response message with errcode:OK if success', done=> {
-                request(server)
-                    .get(`/stations?stationID=stationID`)
-                    .expect(200)
-                    .expect('Content-Type', /json/)
-                    .end((err, res)=> {
-                        if (err) {
-                            done(err);
-                            return;
-                        }
-                        res.body.errcode.should.be.eql(errCodeTable.OK.errCode);
-                        done();
-                    });
-            });
-            it('should response message with errcode:OK if success', done=> {
-                request(server)
-                    .get(`/stations?stationID=`)
-                    .expect(200)
-                    .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -432,9 +457,9 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#post:/data-sources\n' +
         'input:{dataSourceData:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for register a dataSource', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for register a dataSource', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
                 var body = {};
                 request(server)
                     .post(`/data-sources`)
@@ -442,7 +467,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -452,7 +477,7 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:OK and isSuccess:true if success', done => {
                 var body = {
                     dataSourceID: "station-type-other",
                     dataType: "dataType",
@@ -465,7 +490,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -479,15 +504,15 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#get:/data-sources/dataSourceID\n' +
         'input:{dataSourceID:""}\n' +
-        'output:{errcode:0,errmsg:"",dataSource:""}', ()=> {
-        context('request for get dataSource', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",dataSource:""}', () => {
+        context('request for get dataSource', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
                 let dataSourceID = "noDataSourceID";
                 request(server)
                     .get(`/data-sources/${dataSourceID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -496,13 +521,13 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:ok', done=> {
+            it('should response message with errcode:ok', done => {
                 let dataSourceID = "station-type-other";
                 request(server)
                     .get(`/data-sources/${dataSourceID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -515,14 +540,14 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#get:/data-sources\n' +
         'input:{queryOpts:""}\n' +
-        'output:{errcode:0,errmsg:"",dataSources:""}', ()=> {
-        context('request for get dataSources', ()=> {
-            it('should response message with errcode:ok', done=> {
+        'output:{errcode:0,errmsg:"",dataSources:""}', () => {
+        context('request for get dataSources', () => {
+            it('should response message with errcode:ok', done => {
                 request(server)
                     .get(`/data-sources?queryOpts=`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -535,15 +560,15 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#delete:/data-sources/:dataSourceID\n' +
         'input:{dataSourceID:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for delete a dataSource', ()=> {
-            it('should response message with errcode:Fail if no a such dataSource', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for delete a dataSource', () => {
+            it('should response message with errcode:Fail if no a such dataSource', done => {
                 let dataSourceID = "noDataSourceID";
                 request(server)
                     .del(`/data-sources/${dataSourceID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -552,13 +577,13 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:OK and isSuccess:true if success', done => {
                 let dataSourceID = "station-type-other";
                 request(server)
                     .del(`/data-sources/${dataSourceID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -571,9 +596,9 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#post:/permissions\n' +
         'input:{permissionData:""}\n' +
-        'output:{errcode:0,errmsg:"",isSuccess:""}', ()=> {
-        context('request for register a permission', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",isSuccess:""}', () => {
+        context('request for register a permission', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
                 var body = {};
                 request(server)
                     .post(`/permissions`)
@@ -581,7 +606,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -591,7 +616,7 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:OK and isSuccess:true if success', done=> {
+            it('should response message with errcode:OK and isSuccess:true if success', done => {
                 var body = {
                     permissionID: "permissionID",
                     permissionName: "permissionName"
@@ -602,7 +627,7 @@ describe('smartgridMs route use case test', ()=> {
                     .set('Accept', 'application/json')
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -616,14 +641,15 @@ describe('smartgridMs route use case test', ()=> {
     });
     describe('#get:/permissions\n' +
         'input:{permissionID:""}\n' +
-        'output:{errcode:0,errmsg:"",datas:""}', ()=> {
-        context('request for get permission', ()=> {
-            it('should response message with errcode:Fail if post body is illegal', done=> {
+        'output:{errcode:0,errmsg:"",permission:""}', () => {
+        context('request for get permission', () => {
+            it('should response message with errcode:Fail if post body is illegal', done => {
+                let permissionID = "noPermissionID"
                 request(server)
-                    .get(`/permissions?permissionID=noPermissionID`)
+                    .get(`/permissions/${permissionID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -632,12 +658,13 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:ok', done=> {
+            it('should response message with errcode:ok', done => {
+                let permissionID = "permissionID"
                 request(server)
-                    .get(`/permissions?permissionID=`)
+                    .get(`/permissions/${permissionID}`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -646,12 +673,18 @@ describe('smartgridMs route use case test', ()=> {
                         done();
                     });
             });
-            it('should response message with errcode:ok', done=> {
+        });
+    });
+    describe('#get:/permissions\n' +
+        'input:{permissionID:""}\n' +
+        'output:{errcode:0,errmsg:"",permissions:""}', () => {
+        context('request for get permission', () => {
+            it('should response message with errcode:ok', done => {
                 request(server)
-                    .get(`/permissions?permissionID=permissionID`)
+                    .get(`/permissions`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end((err, res)=> {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -698,10 +731,10 @@ describe('smartgridMs route use case test', ()=> {
     //         });
     //     });
     // });
-    after(done=> {
+    after(done => {
         function teardownExpress() {
-            return new Promise((resolve, reject)=> {
-                server.close(err=> {
+            return new Promise((resolve, reject) => {
+                server.close(err => {
                     if (err) {
                         reject(err);
                     } else {
@@ -713,9 +746,9 @@ describe('smartgridMs route use case test', ()=> {
         function* teardown() {
             yield teardownExpress();
         };
-        co(teardown).then(()=> {
+        co(teardown).then(() => {
             done();
-        }).catch(err=> {
+        }).catch(err => {
             done(err);
         });
     });

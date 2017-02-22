@@ -157,81 +157,87 @@ describe('SmartgridLesseeService use case test', ()=> {
             });
         });
     });
-    describe('#getLessees(lesseeID, traceContext, callback)', ()=> {
+    describe('#getLessee(lesseeID, traceContext, callback)', ()=> {
         context('get lessee from smartgrid-lessee service)', ()=> {
             it('return false if no this lesseeID is fail', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getLessees = (lesseeID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getLessee = (lesseeID, traceContext, callback)=> {
                     callback(null, null);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let lesseeID = "noLesseeID";
-                service.getLessees(lesseeID, {}, (err, lesseesJSON)=> {
-                    _.isNull(lesseesJSON).should.be.eql(true);
+                service.getLessee(lesseeID, {}, (err, lessee)=> {
+                    _.isNull(lessee).should.be.eql(true);
                     done();
                 });
             });
             it('return true if have this lesseeID', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getLessees = (lesseeID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getLessee = (lesseeID, traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let lesseeID = "lesseeID";
-                service.getLessees(lesseeID, {}, (err, lesseesJSON)=> {
-                    _.isNull(lesseesJSON).should.be.eql(false);
-                    done();
-                });
-            });
-            it('return true if lesseeID is null', done=> {
-                let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getLessees = (lesseeID, traceContext, callback)=> {
-                    callback(null, []);
-                };
-                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
-                let lesseeID = "";
-                service.getLessees(lesseeID, {}, (err, lesseesJSON)=> {
-                    _.isNull(lesseesJSON).should.be.eql(false);
+                service.getLessee(lesseeID, {}, (err, lessee)=> {
+                    _.isNull(lessee).should.be.eql(false);
                     done();
                 });
             });
         });
     });
-    describe('#getStations(stationID, traceContext, callback)', ()=> {
+    describe('#getLessees(traceContext, callback)', ()=> {
+        context('get lessee from smartgrid-lessee service)', ()=> {
+            it('return true if lesseeID is null', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.getLessees = (traceContext, callback)=> {
+                    callback(null, []);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                service.getLessees({}, (err, lessees)=> {
+                    _.isNull(lessees).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#getStation(stationID, traceContext, callback)', ()=> {
         context('get lessee from smartgrid-lessee service)', ()=> {
             it('return false if no this stationID is fail', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getStations = (stationID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getStation = (stationID, traceContext, callback)=> {
                     callback(null, null);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let stationID = "noStationID";
-                service.getStations(stationID, {}, (err, stationsJSON)=> {
-                    _.isNull(stationsJSON).should.be.eql(true);
+                service.getStation(stationID, {}, (err, station)=> {
+                    _.isNull(station).should.be.eql(true);
                     done();
                 });
             });
             it('return true if have this stationID', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getStations = (stationID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getStation = (stationID, traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let stationID = "stationID";
-                service.getStations(stationID, {}, (err, stationsJSON)=> {
-                    _.isNull(stationsJSON).should.be.eql(false);
+                service.getStation(stationID, {}, (err, station)=> {
+                    _.isNull(station).should.be.eql(false);
                     done();
                 });
             });
+        });
+    });
+    describe('#getStations(traceContext, callback)', ()=> {
+        context('get lessee from smartgrid-lessee service)', ()=> {
             it('return true if stationID is null', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getStations = (stationID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getStations = (traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
-                let stationID = "";
-                service.getStations(stationID, {}, (err, stationsJSON)=> {
-                    _.isNull(stationsJSON).should.be.eql(false);
+                service.getStations({}, (err, stations)=> {
+                    _.isNull(stations).should.be.eql(false);
                     done();
                 });
             });
@@ -303,32 +309,36 @@ describe('SmartgridLesseeService use case test', ()=> {
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let permissionID = "noPermissionID";
-                service.getPermission(permissionID, {}, (err, permissionsJSON)=> {
-                    _.isNull(permissionsJSON).should.be.eql(true);
+                service.getPermission(permissionID, {}, (err, permission)=> {
+                    _.isNull(permission).should.be.eql(true);
                     done();
                 });
             });
             it('return true if have this dataSourceID', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
                 mockHttpSmartgridLesseeServiceGateway.getPermission = (permissionID, traceContext, callback)=> {
-                    callback(null, []);
+                    callback(null, {});
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let permissionID = "permissionID";
-                service.getPermission(permissionID, {}, (err, permissionsJSON)=> {
-                    _.isNull(permissionsJSON).should.be.eql(false);
+                service.getPermission(permissionID, {}, (err, permission)=> {
+                    _.isNull(permission).should.be.eql(false);
                     done();
                 });
             });
+        });
+    });
+    describe('#getPermissions(traceContext, callback)', ()=> {
+        context('get permission from smartgrid-lessee service)', ()=> {
             it('return true if dataSourceID is null', done=> {
                 let mockHttpSmartgridLesseeServiceGateway = {};
-                mockHttpSmartgridLesseeServiceGateway.getPermission = (permissionID, traceContext, callback)=> {
+                mockHttpSmartgridLesseeServiceGateway.getPermissions = (traceContext, callback)=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
                 let permissionID = "";
-                service.getPermission(permissionID, {}, (err, permissionsJSON)=> {
-                    _.isNull(permissionsJSON).should.be.eql(false);
+                service.getPermissions({}, (err, permissions)=> {
+                    _.isNull(permissions).should.be.eql(false);
                     done();
                 });
             });
