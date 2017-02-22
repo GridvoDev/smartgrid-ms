@@ -336,9 +336,195 @@ describe('SmartgridLesseeService use case test', ()=> {
                     callback(null, []);
                 };
                 muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
-                let permissionID = "";
                 service.getPermissions({}, (err, permissions)=> {
                     _.isNull(permissions).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#addRole(roleData, traceContext, callback)', ()=> {
+        context('add permission from smartgrid-lessee service)', ()=> {
+            it('return false if no this permission is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.registerRole = (roleData, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                service.addRole({}, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return true if have this lesseeData', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.registerRole = (roleData, traceContext, callback)=> {
+                    callback(null, true);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let roleData = {};
+                roleData.roleID = "roleID";
+                roleData.roleName = "roleName";
+                roleData.permissionID = "permissionID";
+                service.addRole(roleData, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#delRole(roleID, traceContext, callback)', ()=> {
+        context('del permission from smartgrid-lessee service)', ()=> {
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.delRole = (roleID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let roleID = "noRoleID";
+                service.delRole(roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return true if have this dataSourceID', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.delRole = (roleID, traceContext, callback)=> {
+                    callback(null, true);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let roleID = "roleID";
+                service.delRole(roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#getRole(roleID, traceContext, callback)', ()=> {
+        context('get permission from smartgrid-lessee service)', ()=> {
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.getRole = (roleID, traceContext, callback)=> {
+                    callback(null, null);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let roleID = "noRoleID";
+                service.getRole(roleID, {}, (err, role)=> {
+                    _.isNull(role).should.be.eql(true);
+                    done();
+                });
+            });
+            it('return true if have this dataSourceID', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.getRole = (roleID, traceContext, callback)=> {
+                    callback(null, {});
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let roleID = "roleID";
+                service.getRole(roleID, {}, (err, role)=> {
+                    _.isNull(role).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#getRoles(traceContext, callback)', ()=> {
+        context('get permission from smartgrid-lessee service)', ()=> {
+            it('return true if dataSourceID is null', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.getRoles = (traceContext, callback)=> {
+                    callback(null, []);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                service.getRoles({}, (err, roles)=> {
+                    _.isNull(roles).should.be.eql(false);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#assignPermissionToRole(permissionID, roleID, traceContext, callback)', ()=> {
+        context('get permission from smartgrid-lessee service)', ()=> {
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.assignPermissionToRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="noPermissionID";
+                let roleID = "roleID";
+                service.assignPermissionToRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.assignPermissionToRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="permissionID";
+                let roleID = "noRoleID";
+                service.assignPermissionToRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return true if dataSourceID is null', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.assignPermissionToRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, true);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="permissionID";
+                let roleID = "roleID";
+                service.assignPermissionToRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+        });
+    });
+    describe('#canclePermissionofRole(permissionID, roleID, traceContext, callback)', ()=> {
+        context('get permission from smartgrid-lessee service)', ()=> {
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.canclePermissionofRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="noPermissionID";
+                let roleID = "roleID";
+                service.canclePermissionofRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return false if no this permissionID is fail', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.canclePermissionofRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, false);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="permissionID";
+                let roleID = "noRoleID";
+                service.canclePermissionofRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(false);
+                    done();
+                });
+            });
+            it('return true if dataSourceID is null', done=> {
+                let mockHttpSmartgridLesseeServiceGateway = {};
+                mockHttpSmartgridLesseeServiceGateway.canclePermissionofRole = (permissionID, roleID, traceContext, callback)=> {
+                    callback(null, true);
+                };
+                muk(service, "_httpSmartgridLesseeServiceGateway", mockHttpSmartgridLesseeServiceGateway);
+                let permissionID ="permissionID";
+                let roleID = "roleID";
+                service.canclePermissionofRole(permissionID, roleID, {}, (err, isSuccess)=> {
+                    isSuccess.should.be.eql(true);
                     done();
                 });
             });
