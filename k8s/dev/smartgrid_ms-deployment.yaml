@@ -1,7 +1,10 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  labels:
+    name: smartgrid-ms
   name: smartgrid-ms
+  namespace: gridvo
 spec:
   replicas: 1
   template:
