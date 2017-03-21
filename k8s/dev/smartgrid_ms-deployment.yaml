@@ -23,3 +23,15 @@ spec:
           value: "true"
         - name: IS_DEBUG
           value: "true"
+        - name: DATA_COLLECT_SERVICE_HOST
+          value: "data-collect"
+        - name: DATA_COLLECT_SERVICE_PORT
+          value: "80"
+        - name: SMARTGRID_LESSEE_SERVICE_HOST
+          value: "smartgrid-lessee"
+        - name: SMARTGRID_LESSEE_SERVICE_PORT
+          value: "80"
+        - name: ZIPKIN_SERVICE_HOST
+          value: "zipkin"
+        - name: ZIPKIN_HTTP_TRANSPORT_PORT
+          value: "9411"
